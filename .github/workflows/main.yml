@@ -1,4 +1,4 @@
-name: Build Mochi Todo APK
+name: Build Mochi Todo APk
 
 on:
   push:
