@@ -1,0 +1,41 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'app.mochitodo'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'app.mochitodo'
+        minSdk 27
+        targetSdk 34
+        versionCode 1
+        versionName '1.0'
+    }
+
+    // One fixed key, so each new build installs over the old one (you stay signed in).
+    signingConfigs {
+        mochi {
+            storeFile file('mochi.keystore')
+            storePassword 'mochitodo'
+            keyAlias 'mochi'
+            keyPassword 'mochitodo'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.mochi
+        }
+        debug {
+            signingConfig signingConfigs.mochi
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
