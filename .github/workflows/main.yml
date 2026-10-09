@@ -1,0 +1,46 @@
+name: Build Mochi Todo APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Put the files where Android expects them
+        run: |
+          R=app/src/main/res
+          mkdir -p app/src/main/java/app/mochitodo $R/values $R/values-night $R/drawable $R/mipmap-anydpi-v26
+          cp MainActivity.java app/src/main/java/app/mochitodo/
+          cp AndroidManifest.xml app/src/main/
+          cp colors.xml themes.xml $R/values/
+          cp colors-night.xml $R/values-night/colors.xml
+          cp themes-night.xml $R/values-night/themes.xml
+          cp ic_launcher_foreground.xml $R/drawable/
+          cp ic_launcher.xml $R/mipmap-anydpi-v26/
+          cp app-build.gradle app/build.gradle
+          cp mochi.keystore app/
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Build APK
+        run: |
+          gradle assembleRelease --no-daemon --stacktrace
+          cp app/build/outputs/apk/release/app-release.apk MochiTodo.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MochiTodo-apk
+          path: MochiTodo.apk
